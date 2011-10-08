@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class LVTransaction;
+@class LVSnapshot;
 
 @interface LVDatabase : NSObject
 
@@ -17,6 +18,7 @@
 - (NSString*)valueForKey:(NSString*)key;
 - (BOOL)deleteValueForKey:(NSString*)key;
 - (LVTransaction*)transaction;
+- (LVSnapshot*)snapshot;
 - (void*)underlyingDatabase;
 - (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*))callback;
 - (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*))callback;

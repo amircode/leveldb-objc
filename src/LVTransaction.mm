@@ -19,10 +19,6 @@
 - (id)initWithDatabase:(LVDatabase*)database {
     if ((self = [super init])) {
         db = (leveldb::DB*) [database underlyingDatabase];
-        /*leveldb::WriteBatch batch;
-        batch.Delete(key1);
-        batch.Put(key2, value);
-        s = db->Write(leveldb::WriteOptions(), &batch);*/
     }
     return self;
 }

@@ -18,5 +18,7 @@
 - (BOOL)deleteValueForKey:(NSString*)key;
 - (LVTransaction*)transaction;
 - (void*)underlyingDatabase;
+- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*))callback;
+- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*))callback;
 
 @end

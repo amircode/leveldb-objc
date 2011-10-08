@@ -15,6 +15,26 @@
     leveldb::DB* db;
 }
 
+- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*))callback {
+    leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    for (it->SeekToFirst(); it->Valid(); it->Next()) {
+        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()]);
+    }
+    BOOL retVal = it->status().ok();
+    delete it;    
+    return retVal;
+}
+
+- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*))callback {
+    leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    for (it->Seek([start UTF8String]); it->Valid() && it->key().ToString() < [limit UTF8String]; it->Next()) {
+        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()]);
+    }
+    BOOL retVal = it->status().ok();
+    delete it;    
+    return retVal;
+}
+
 - (void*)underlyingDatabase {
     return db;
 }

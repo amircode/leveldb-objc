@@ -7,11 +7,20 @@
 //
 
 #import "LVDatabase.h"
+#import "LVTransaction.h"
 #include <iostream>
 #include "leveldb/db.h"
 
 @implementation LVDatabase {
     leveldb::DB* db;
+}
+
+- (void*)underlyingDatabase {
+    return db;
+}
+
+- (LVTransaction*)transaction {
+    return [[[LVTransaction alloc] initWithDatabase: self] autorelease];
 }
 
 - (BOOL)putValue:(NSString*)value forKey:(NSString*)key {

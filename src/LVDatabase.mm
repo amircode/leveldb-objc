@@ -8,6 +8,7 @@
 
 #import "LVDatabase.h"
 #import "LVTransaction.h"
+#import "LVSnapshot.h"
 #include <iostream>
 #include "leveldb/db.h"
 
@@ -41,6 +42,10 @@
 
 - (LVTransaction*)transaction {
     return [[[LVTransaction alloc] initWithDatabase: self] autorelease];
+}
+
+- (LVSnapshot*)snapshot {
+    return [[[LVSnapshot alloc] initWithDatabase: self] autorelease];
 }
 
 - (BOOL)putValue:(NSString*)value forKey:(NSString*)key {

@@ -13,7 +13,7 @@
 @interface LVSnapshot : NSObject
 
 - (id)initWithDatabase:(LVDatabase*)database;
-- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*))callback;
-- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*))callback;
+- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*,BOOL*))callback;
+- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*,BOOL*))callback;
 
 @end

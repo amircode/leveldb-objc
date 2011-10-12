@@ -16,21 +16,27 @@
     leveldb::DB* db;
 }
 
-- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*))callback {
+- (BOOL)enumerateKeyValuePairsWithCallback:(void(^)(NSString*,NSString*,BOOL*))callback {
     leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    BOOL cont = YES;
     for (it->SeekToFirst(); it->Valid(); it->Next()) {
-        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()]);
+        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()], &cont);
+        if (cont == NO) break;
     }
+    callback(nil, nil, &cont);
     BOOL retVal = it->status().ok();
     delete it;    
     return retVal;
 }
 
-- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*))callback {
+- (BOOL)enumerateKeyValuePairsFromKey:(NSString*)start toKey:(NSString*)limit callback:(void(^)(NSString*,NSString*,BOOL*))callback {
     leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+    BOOL cont = YES;
     for (it->Seek([start UTF8String]); it->Valid() && it->key().ToString() < [limit UTF8String]; it->Next()) {
-        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()]);
+        callback([NSString stringWithUTF8String: it->key().ToString().c_str()], [NSString stringWithUTF8String: it->value().ToString().c_str()], &cont);
+        if (cont == NO) break;
     }
+    callback(nil, nil, &cont);
     BOOL retVal = it->status().ok();
     delete it;    
     return retVal;

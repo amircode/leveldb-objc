@@ -14,9 +14,11 @@
 @interface LVDatabase : NSObject
 
 - (id)initWithPath:(NSString*)path;
-- (BOOL)putValue:(NSString*)value forKey:(NSString*)key;
-- (NSString*)valueForKey:(NSString*)key;
-- (BOOL)deleteValueForKey:(NSString*)key;
+- (BOOL)putString:(NSString*)value forKey:(NSString*)key;
+- (BOOL)putObject:(NSObject<NSCoding>*)value forKey:(NSString*)key;
+- (NSString*)stringForKey:(NSString*)key;
+- (NSObject<NSCoding>*)objectForKey:(NSString*)key;
+- (BOOL)removeKey:(NSString*)key;
 - (LVTransaction*)transaction;
 - (LVSnapshot*)snapshot;
 - (void*)underlyingDatabase;

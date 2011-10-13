@@ -14,7 +14,8 @@
 
 - (id)initWithDatabase:(LVDatabase*)database;
 - (BOOL)commit;
-- (void)putValue:(NSString*)value forKey:(NSString*)key;
-- (void)deleteValueForKey:(NSString*)key;
+- (void)putString:(NSString*)value forKey:(NSString*)key;
+- (void)putObject:(NSObject<NSCoding>*)value forKey:(NSString*)key;
+- (void)removeKey:(NSString*)key;
 
 @end

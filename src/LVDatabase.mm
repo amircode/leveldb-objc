@@ -9,6 +9,7 @@
 #import "LVDatabase.h"
 #import "LVTransaction.h"
 #import "LVSnapshot.h"
+#import "EXNSAdditions.h"
 #include <iostream>
 #include "leveldb/db.h"
 
@@ -54,18 +55,39 @@
     return [[[LVSnapshot alloc] initWithDatabase: self] autorelease];
 }
 
-- (BOOL)putValue:(NSString*)value forKey:(NSString*)key {
+- (BOOL)putString:(NSString*)value forKey:(NSString*)key {
     leveldb::Status s = db->Put(leveldb::WriteOptions(), [key UTF8String], [value UTF8String]);
     return s.ok();
 }
 
-- (NSString*)valueForKey:(NSString*)key {
+- (BOOL)putObject:(NSObject<NSCoding>*)value forKey:(NSString*)key {
+    NSMutableData* data = [[NSMutableData alloc] init];
+    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData: data];
+    [archiver encodeObject: value forKey: @"object"];
+    [archiver finishEncoding];
+    BOOL retVal = [self putString: [data base64String] forKey: key];
+    [archiver release];
+    [data release];
+    return retVal;
+}
+
+- (NSString*)stringForKey:(NSString*)key {
     std::string value;
     leveldb::Status s = db->Get(leveldb::ReadOptions(), [key UTF8String], &value);
     return s.ok() ? [NSString stringWithUTF8String: value.c_str()] : nil;
 }
 
-- (BOOL)deleteValueForKey:(NSString*)key {
+- (NSObject<NSCoding>*)objectForKey:(NSString*)key {
+    NSString* valueAsString = [self stringForKey: key];
+    if (valueAsString == nil) return nil;
+    NSData* data = [NSData dataWithBase64String: valueAsString];
+    NSKeyedUnarchiver* unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData: data];
+    id object = [unarchiver decodeObjectForKey: @"object"];
+    [unarchiver release];
+    return object;
+}
+
+- (BOOL)removeKey:(NSString*)key {
     leveldb::Status s = db->Delete(leveldb::WriteOptions(), [key UTF8String]);
     return s.ok();
 }

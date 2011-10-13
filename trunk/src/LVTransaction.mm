@@ -8,6 +8,7 @@
 
 #import "LVTransaction.h"
 #import "LVDatabase.h"
+#import "EXNSAdditions.h"
 #include "leveldb/db.h"
 #include "leveldb/write_batch.h"
 
@@ -28,11 +29,21 @@
     return s.ok();
 }
 
-- (void)putValue:(NSString*)value forKey:(NSString*)key {
+- (void)putString:(NSString*)value forKey:(NSString*)key {
     batch.Put([key UTF8String], [value UTF8String]);
 }
 
-- (void)deleteValueForKey:(NSString*)key {
+- (void)putObject:(NSObject<NSCoding>*)value forKey:(NSString*)key {
+    NSMutableData* data = [[NSMutableData alloc] init];
+    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData: data];
+    [archiver encodeObject: value forKey: @"object"];
+    [archiver finishEncoding];
+    [self putString: [data base64String] forKey: key];
+    [archiver release];
+    [data release];
+}
+
+- (void)removeKey:(NSString*)key {
     batch.Delete([key UTF8String]);
 }
 
